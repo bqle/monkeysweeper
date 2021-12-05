@@ -1,0 +1,16 @@
+
+*.class
+src/main/java/org/cis120/mushroom/Circle.java
+src/main/java/org/cis120/mushroom/Direction.java
+src/main/java/org/cis120/mushroom/GameCourt.java
+src/main/java/org/cis120/mushroom/GameObj.java
+src/main/java/org/cis120/mushroom/Poison.java
+src/main/java/org/cis120/mushroom/RunMushroomOfDoom.java
+src/main/java/org/cis120/mushroom/Square.java
+src/main/java/org/cis120/tictactoe/GameBoard.java
+src/main/java/org/cis120/tictactoe/RunTicTacToe.java
+src/main/java/org/cis120/tictactoe/TicTacToe.java
+src/test/java/org/cis120/CompilationTest.java
+src/test/java/org/cis120/mushroom/GameTest.java
+src/test/java/org/cis120/tictactoe/GameTest.java
+*.xml
