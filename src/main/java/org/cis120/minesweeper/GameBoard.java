@@ -50,7 +50,7 @@ public class GameBoard extends JPanel {
     /**
      * Initializes the game board.
      */
-    public GameBoard(JLabel statusInit, JButton[] buttonsInit) {
+    public GameBoard(JLabel statusInit, JFrame frame, JButton[] buttonsInit) {
         // creates border around the court area, JComponent method
         setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
@@ -74,10 +74,13 @@ public class GameBoard extends JPanel {
             public void mouseReleased(MouseEvent e) {
                 if (!solvingMode) {
                     Point p = e.getPoint();
-                    if (e.getButton() == MouseEvent.BUTTON1) {
+                    if (SwingUtilities.isRightMouseButton(e)) {
+                        boolean valid = minesweeper.flipFlag(p.y / 20, p.x / 20);
+                        if (!valid) {
+                            JOptionPane.showMessageDialog(frame, "You ran out of flags. Consider undoing some flags.");
+                        }
+                    } else if (SwingUtilities.isLeftMouseButton(e)) {
                         minesweeper.show(p.y / 20, p.x / 20);
-                    } else if (SwingUtilities.isRightMouseButton(e)) {
-                        minesweeper.flipFlag(p.y / 20, p.x / 20);
                     }
 
                     updateStatus(); // updates the status JLabel

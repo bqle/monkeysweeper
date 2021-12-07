@@ -67,7 +67,7 @@ public class RunMinesweeper implements Runnable {
         JButton[] buttons = new JButton[]{reset, solveLikePro, solveLikeAmateur, solveLikeMonkey, save, help};
 
         // Game board
-        final GameBoard board = new GameBoard(status, buttons);
+        final GameBoard board = new GameBoard(status, frame, buttons);
         frame.add(board, BorderLayout.CENTER);
 
         // Reset button
@@ -82,13 +82,13 @@ public class RunMinesweeper implements Runnable {
         });
         control_panel.add(reset);
 
-        // SolveLikePro button
-        solveLikePro.addActionListener(new ActionListener() {
+        // SolveLikeMonkey button
+        solveLikeMonkey.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                board.solveLikePro();
+                board.solveLikeMonkey();
             }
         });
-        control_panel.add(solveLikePro);
+        control_panel.add(solveLikeMonkey);
 
         // SolveLikeAmateur button
         solveLikeAmateur.addActionListener(new ActionListener() {
@@ -98,13 +98,13 @@ public class RunMinesweeper implements Runnable {
         });
         control_panel.add(solveLikeAmateur);
 
-        // SolveLikeMonkey button
-        solveLikeMonkey.addActionListener(new ActionListener() {
+        // SolveLikePro button
+        solveLikePro.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                board.solveLikeMonkey();
+                board.solveLikePro();
             }
         });
-        control_panel.add(solveLikeMonkey);
+        control_panel.add(solveLikePro);
 
         // Save button
         save.addActionListener(new ActionListener() {
@@ -121,6 +121,7 @@ public class RunMinesweeper implements Runnable {
                         "<html><center>Welcome to <i>Minesweeper V2</i></center><br>" +
                                 "Left click to reveal a square<br>" +
                                 "Right click to place or remove a flag<br>" +
+                                "(sorry, Mac users, but the game doesn't have trackpad support)<br>" +
                                 "The side options come with abilities<br>" +
                                 "of increasing dexterity to solve the game.<br><br>" +
                                 "<center>Have fun stepping on mines<br>" +
@@ -134,7 +135,6 @@ public class RunMinesweeper implements Runnable {
 
         // Put the frame on the screen
         frame.pack();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
 
 
@@ -142,15 +142,21 @@ public class RunMinesweeper implements Runnable {
         frame.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+                int confirm = JOptionPane.showOptionDialog(frame,
+                        "Would you like to save the game?",
+                        "Exit Confirmation", JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE, null, null, null);
 
-                System.out.println("Saving game...");
-
+                if (confirm == JOptionPane.NO_OPTION) {
+                    board.reset();
+                }
                 board.saveToFile();
-
-                System.exit(0);
+                System.exit(1);
 
             }
         });
+
+        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
 
 

@@ -50,57 +50,68 @@ public class Minesweeper {
      * @param j olumn to flip flag
      * @return void
      */
-    public void flipFlag(int i, int j) {
+    public boolean flipFlag(int i, int j) {
         int visibility = board[i][j].getVisibility();
-        int value = board[i][j].getValue();
         if (gameOver == false) {
             if (visibility == 2) {
                 board[i][j].setVisibility(0);
                 flagCount++;
 
             } else if (visibility == 0) {
+                if (flagCount == 0) {
+                    return false;
+                }
                 board[i][j].setVisibility(2);
                 flagCount--;
             }
+            return true;
+        } else {
+            return false;
         }
     }
 
-    public void addSquareToPropagate(Square[][] board, LinkedList<Square> toBeUncovered, int i, int j) {
-        // only add adjacent squares if the current square is empty
+    /**
+     * Helper method to propagate the reveal of an empty square
+     * @param board - the board that its propagating on
+     * @param i - row of the source
+     * @param j - column of the source
+     */
+    public void propagate(Square[][] board, int i , int j) {
+        // base case is: if the board is already shown, the method does nothing
+        if (board[i][j].getVisibility() == 1) {
+            return;
+        } else {
+            board[i][j].setVisibility(1);
+            uncoveredCnt++;
+        }
+
         if (board[i][j].getValue() == 0) {
-            if (i - 1 >= 0 && j - 1 >= 0 && board[i-1][j-1].getValue() != -1) {
-                toBeUncovered.add(board[i - 1][j-1]);
+            if (i - 1 >= 0 && j - 1 >= 0 && board[i-1][j-1].getVisibility() != -1) {
+                propagate(board, i-1, j-1);
             }
-            if (i - 1 >= 0) {
-                toBeUncovered.add(board[i - 1][j]);
+            if (i - 1 >= 0 && board[i-1][j].getVisibility() == 0) {
+                propagate(board, i - 1, j);
             }
-            if (i - 1 >= 0 && j + 1 < 20) {
-                toBeUncovered.add(board[i - 1][j + 1]);
+            if (i - 1 >= 0 && j + 1 < 20 && board[i-1][j+1].getVisibility() != -1) {
+                propagate(board, i - 1, j+1);
             }
-            if (j - 1 >= 0) {
-                toBeUncovered.add(board[i][j - 1]);
+            if (j - 1 >= 0 && board[i][j-1].getVisibility() != -1) {
+                propagate(board, i, j-1);
             }
-            if (j + 1 < 20) {
-                toBeUncovered.add(board[i][j + 1]);
+            if (j + 1 < 20 && board[i][j+1].getVisibility() != -1) {
+                propagate(board, i, j+1);
             }
-            if (i + 1 < 20 && j - 1 >= 0) {
-                toBeUncovered.add(board[i + 1][j - 1]);
+            if (i + 1 < 20 && j - 1 >= 0 && board[i+1][j-1].getVisibility() != -1) {
+                propagate(board, i + 1, j-1);
             }
-            if (i + 1 < 20) {
-                toBeUncovered.add(board[i + 1][j]);
+            if (i + 1 < 20 && board[i+1][j].getVisibility() != -1) {
+                propagate(board, i + 1, j);
             }
-            if (i + 1 < 20 && j + 1 < 20) {
-               toBeUncovered.add(board[i + 1][j + 1]);
+            if (i + 1 < 20 && j + 1 < 20 && board[i+1][j+1].getVisibility() != -1) {
+                propagate(board, i + 1, j+1);
             }
         }
-    }
 
-    public void revealAllSquares() {
-        for (int i = 0 ; i < 20; i++) {
-            for (int j = 0 ; j < 20 ; j++) {
-                board[i][j].setVisibility(1);
-            }
-        }
     }
 
     /**
@@ -121,18 +132,7 @@ public class Minesweeper {
                     revealAllSquares();
                 } else if (value == 0) {
                     // propagate discover if square value is 0
-                    LinkedList<Square> toBeUncovered = new LinkedList<>();
-                    toBeUncovered.add(board[i][j]);
-                    while (!toBeUncovered.isEmpty()) {
-                        Square focus = toBeUncovered.removeFirst();
-                        if (focus.getVisibility() == 0) {
-                            focus.setVisibility(1);
-                            uncoveredCnt++;
-                            if (focus.getValue() == 0) {
-                                addSquareToPropagate(board, toBeUncovered, focus.getI(), focus.getJ());
-                            }
-                        }
-                    }
+                    propagate(board, i, j);
                 } else {
                     // show the number if square value > 0
                     uncoveredCnt++;
@@ -142,6 +142,17 @@ public class Minesweeper {
                 // if was flag, left click turns removes flag
                 board[i][j].setVisibility(0);
                 flagCount++;
+            }
+        }
+    }
+
+    /**
+     * Reveals all the squares in the board
+     */
+    public void revealAllSquares() {
+        for (int i = 0 ; i < 20; i++) {
+            for (int j = 0 ; j < 20 ; j++) {
+                board[i][j].setVisibility(1);
             }
         }
     }
@@ -191,7 +202,7 @@ public class Minesweeper {
         flagCount = 0;
         uncoveredCnt = 0;
 
-        // Populate the array randomly with bombs with probability 1/7
+        // Populate the array randomly with bombs of probability 1/7
         for (int i = 0 ; i < 20; i++) {
             for (int j = 0 ; j < 20; j++) {
                 boolean isBomb = (Math.random() * 7 < 1);
@@ -212,6 +223,18 @@ public class Minesweeper {
         gameOver = false;
     }
 
+    public void removeAllFlags(Square[][] board) {
+        for (int i = 0 ; i < 20 ; i++) {
+            for (int j = 0 ; j < 20; j++) {
+                int visibility = board[i][j].getVisibility();
+                if (visibility == 2) {
+                    board[i][j].setVisibility(0);
+                    flagCount++;
+                }
+            }
+        }
+    }
+
     /**
      * Solve the game using standard human techniques
      * still probability based
@@ -219,6 +242,9 @@ public class Minesweeper {
     public LinkedList<Square> solve(Method updateProbabilityMethod){
         LinkedList<Square> tries = new LinkedList<>();
         try {
+            // removes all flags since algorithms don't care about flags
+            removeAllFlags(board);
+
             Square[][] cloneBoard = new Square[20][20];
             float[][] probability = new float[20][20];
             for (int i = 0; i < 20; i++) {
@@ -227,9 +253,14 @@ public class Minesweeper {
                     cloneBoard[i][j] = new Square(i, j, s.getValue(), s.getVisibility());
                 }
             }
+            int presolveUncoveredCnt = uncoveredCnt;
+            while (uncoveredCnt + bombCount < 400) {
+                // update probability first before any decision is made
+                Object[] parameters = new Object[2];
+                parameters[0] = cloneBoard;
+                parameters[1] = probability;
+                updateProbabilityMethod.invoke(this, parameters);
 
-            int uncovered = uncoveredCnt;
-            while (uncovered + bombCount < 400) {
                 int choiceI = 0;
                 int choiceJ = 0;
                 float choiceProbability = 2;
@@ -259,30 +290,16 @@ public class Minesweeper {
                     break;
                 } else if (value == 0) {
                     // propagate discover if square value is 0
-                    LinkedList<Square> toBeUncovered = new LinkedList<>();
-                    toBeUncovered.add(cloneBoard[choiceI][choiceJ]);
-                    while (!toBeUncovered.isEmpty()) {
-                        Square focus = toBeUncovered.removeFirst();
-                        if (focus.getVisibility() == 0) {
-                            focus.setVisibility(1);
-                            probability[focus.getI()][focus.getJ()] = 1;
-                            uncovered++;
-                            if (focus.getValue() == 0) {
-                                addSquareToPropagate(cloneBoard, toBeUncovered, focus.getI(), focus.getJ());
-                            }
-                        }
-                    }
+                    propagate(cloneBoard, choiceI, choiceJ);
                 } else {
                     // show the number if square value > 0
                     cloneBoard[choiceI][choiceJ].setVisibility(1);
-                    uncovered++;
+                    uncoveredCnt++;
 
                 }
-                Object[] parameters = new Object[2];
-                parameters[0] = cloneBoard;
-                parameters[1] = probability;
-                updateProbabilityMethod.invoke(this, parameters);
+
             }
+            uncoveredCnt = presolveUncoveredCnt;
             return tries;
         } catch(Exception e) {
             System.out.println("An error occurred in trying to solve in sub method" + e);
@@ -291,9 +308,9 @@ public class Minesweeper {
     }
 
     /**
-     * Helper method for updateProbabilityLikeHuman
+     * Helper method for updateProbabilityLikePro
      */
-    public float getAdjacentsBombProbability(Square[][] board, int i, int j) {
+    public float getAdjacentBombProbabilityLikePro(Square[][] board, int i, int j) {
         // guaranteed to only be called on shown, non-bomb squares
         float unshownCnt = 0.0f;
         int knownBombCnt = 0;
@@ -366,42 +383,42 @@ public class Minesweeper {
                 float probabilityOfBeingBomb = 1.0f/10;
                 boolean guaranteedNotBomb = false;
                 if (i-1 >=0 && j-1 >= 0 && board[i-1][j-1].getVisibility() == 1) {
-                    float tempBombProbability = getAdjacentsBombProbability(board, i-1, j-1);
+                    float tempBombProbability = getAdjacentBombProbabilityLikePro(board, i-1, j-1);
                     probabilityOfBeingBomb = Math.max(probabilityOfBeingBomb, tempBombProbability);
                     if (tempBombProbability == 0) guaranteedNotBomb = true;
                 }
                 if (i-1 >= 0 && board[i-1][j].getVisibility() == 1) {
-                    float tempBombProbability = getAdjacentsBombProbability(board, i-1, j);
+                    float tempBombProbability = getAdjacentBombProbabilityLikePro(board, i-1, j);
                     probabilityOfBeingBomb = Math.max(probabilityOfBeingBomb, tempBombProbability);
                     if (tempBombProbability == 0) guaranteedNotBomb = true;
                 }
                 if (i-1 >= 0 && j+1 < 20 && board[i-1][j+1].getVisibility() == 1) {
-                    float tempBombProbability = getAdjacentsBombProbability(board, i-1, j+1);
+                    float tempBombProbability = getAdjacentBombProbabilityLikePro(board, i-1, j+1);
                     probabilityOfBeingBomb = Math.max(probabilityOfBeingBomb, tempBombProbability);
                     if (tempBombProbability == 0) guaranteedNotBomb = true;
                 }
                 if (j-1 >= 0 && board[i][j-1].getVisibility() == 1) {
-                    float tempBombProbability = getAdjacentsBombProbability(board, i, j-1);
+                    float tempBombProbability = getAdjacentBombProbabilityLikePro(board, i, j-1);
                     probabilityOfBeingBomb = Math.max(probabilityOfBeingBomb, tempBombProbability);
                     if (tempBombProbability == 0) guaranteedNotBomb = true;
                 }
                 if (j+1 < 20 && board[i][j+1].getVisibility() == 1) {
-                    float tempBombProbability = getAdjacentsBombProbability(board, i, j+1);
+                    float tempBombProbability = getAdjacentBombProbabilityLikePro(board, i, j+1);
                     probabilityOfBeingBomb = Math.max(probabilityOfBeingBomb, tempBombProbability);
                     if (tempBombProbability == 0) guaranteedNotBomb = true;
                 }
                 if (i+1 < 20 && j-1 >= 0 && board[i+1][j-1].getVisibility() == 1) {
-                    float tempBombProbability = getAdjacentsBombProbability(board, i+1, j-1);
+                    float tempBombProbability = getAdjacentBombProbabilityLikePro(board, i+1, j-1);
                     probabilityOfBeingBomb = Math.max(probabilityOfBeingBomb, tempBombProbability);
                     if (tempBombProbability == 0) guaranteedNotBomb = true;
                 }
                 if (i+1 < 20 && board[i+1][j].getVisibility() == 1) {
-                    float tempBombProbability = getAdjacentsBombProbability(board, i+1, j);
+                    float tempBombProbability = getAdjacentBombProbabilityLikePro(board, i+1, j);
                     probabilityOfBeingBomb = Math.max(probabilityOfBeingBomb, tempBombProbability);
                     if (tempBombProbability == 0) guaranteedNotBomb = true;
                 }
                 if (i+1 < 20 && j+1 < 20 && board[i+1][j+1].getVisibility() == 1) {
-                    float tempBombProbability = getAdjacentsBombProbability(board, i+1, j+1);
+                    float tempBombProbability = getAdjacentBombProbabilityLikePro(board, i+1, j+1);
                     probabilityOfBeingBomb = Math.max(probabilityOfBeingBomb, tempBombProbability);
                     if (tempBombProbability == 0) guaranteedNotBomb = true;
                 }
@@ -443,7 +460,7 @@ public class Minesweeper {
     /**
      * Helper method for updateProbabilityLikeMonkey
      */
-    public float getAdjacentsBombProbabilityV2(Square[][] board, int i, int j) {
+    public float getAdjacentBombProbabilityLikeAmateur(Square[][] board, int i, int j) {
         // guaranteed to only be called on shown, non-bomb squares
         float unshownCnt = 0.0f;
         if (i-1 >=0 && j-1 >= 0 && board[i-1][j-1].getVisibility() == 0) {
@@ -476,41 +493,41 @@ public class Minesweeper {
     /**
      * update probability from board
      */
-    public void updateProbabilityLikeMonkey(Square[][] board, float[][] probability) {
+    public void updateProbabilityLikeAmateur(Square[][] board, float[][] probability) {
         for (int i = 0 ; i < 20 ; i++) {
             for (int j = 0 ; j < 20; j++) {
                 if (board[i][j].getVisibility() == 1) continue;
                 float probabilityOfBeingBomb = 1.0f/10;
                 if (i-1 >=0 && j-1 >= 0 && board[i-1][j-1].getVisibility() == 1) {
-                    float tempBombProbability = getAdjacentsBombProbabilityV2(board, i-1, j-1);
+                    float tempBombProbability = getAdjacentBombProbabilityLikeAmateur(board, i-1, j-1);
                     probabilityOfBeingBomb = Math.max(probabilityOfBeingBomb, tempBombProbability);
                 }
                 if (i-1 >= 0 && board[i-1][j].getVisibility() == 1) {
-                    float tempBombProbability = getAdjacentsBombProbabilityV2(board, i-1, j);
+                    float tempBombProbability = getAdjacentBombProbabilityLikeAmateur(board, i-1, j);
                     probabilityOfBeingBomb = Math.max(probabilityOfBeingBomb, tempBombProbability);
                 }
                 if (i-1 >= 0 && j+1 < 20 && board[i-1][j+1].getVisibility() == 1) {
-                    float tempBombProbability = getAdjacentsBombProbabilityV2(board, i-1, j+1);
+                    float tempBombProbability = getAdjacentBombProbabilityLikeAmateur(board, i-1, j+1);
                     probabilityOfBeingBomb = Math.max(probabilityOfBeingBomb, tempBombProbability);
                 }
                 if (j-1 >= 0 && board[i][j-1].getVisibility() == 1) {
-                    float tempBombProbability = getAdjacentsBombProbabilityV2(board, i, j-1);
+                    float tempBombProbability = getAdjacentBombProbabilityLikeAmateur(board, i, j-1);
                     probabilityOfBeingBomb = Math.max(probabilityOfBeingBomb, tempBombProbability);
                 }
                 if (j+1 < 20 && board[i][j+1].getVisibility() == 1) {
-                    float tempBombProbability = getAdjacentsBombProbabilityV2(board, i, j+1);
+                    float tempBombProbability = getAdjacentBombProbabilityLikeAmateur(board, i, j+1);
                     probabilityOfBeingBomb = Math.max(probabilityOfBeingBomb, tempBombProbability);
                 }
                 if (i+1 < 20 && j-1 >= 0 && board[i+1][j-1].getVisibility() == 1) {
-                    float tempBombProbability = getAdjacentsBombProbabilityV2(board, i+1, j-1);
+                    float tempBombProbability = getAdjacentBombProbabilityLikeAmateur(board, i+1, j-1);
                     probabilityOfBeingBomb = Math.max(probabilityOfBeingBomb, tempBombProbability);
                 }
                 if (i+1 < 20 && board[i+1][j].getVisibility() == 1) {
-                    float tempBombProbability = getAdjacentsBombProbabilityV2(board, i+1, j);
+                    float tempBombProbability = getAdjacentBombProbabilityLikeAmateur(board, i+1, j);
                     probabilityOfBeingBomb = Math.max(probabilityOfBeingBomb, tempBombProbability);
                 }
                 if (i+1 < 20 && j+1 < 20 && board[i+1][j+1].getVisibility() == 1) {
-                    float tempBombProbability = getAdjacentsBombProbabilityV2(board, i+1, j+1);
+                    float tempBombProbability = getAdjacentBombProbabilityLikeAmateur(board, i+1, j+1);
                     probabilityOfBeingBomb = Math.max(probabilityOfBeingBomb, tempBombProbability);
                 }
 
@@ -532,7 +549,7 @@ public class Minesweeper {
             Class[] parameterTypes = new Class[2];
             parameterTypes[0] = Square[][].class;
             parameterTypes[1] = float[][].class;
-            Method updateProbabilityMethod = Minesweeper.class.getMethod("updateProbabilityLikeMonkey", parameterTypes);
+            Method updateProbabilityMethod = Minesweeper.class.getMethod("updateProbabilityLikeAmateur", parameterTypes);
             tries = solve(updateProbabilityMethod);
         } catch (Exception e) {
             System.out.println("An error occurred in trying to solve " + e);
@@ -542,6 +559,9 @@ public class Minesweeper {
     }
 
     public LinkedList<Square> solveLikeMonkey() {
+        // remove all flags
+        removeAllFlags(board);
+
         LinkedList<Square> clone = new LinkedList<>();
         for (int i = 0 ; i < 20 ; i++) {
             for (int j = 0 ; j < 20; j++) {
@@ -552,11 +572,9 @@ public class Minesweeper {
             }
         }
         Collections.shuffle(clone);
-        System.out.println("tries size" + clone.size());
         int include = 0 ;
         for (int i = 0 ; i < clone.size() ; i++) {
             include++;
-            System.out.println(clone.get(i).getI() + " " + clone.get(i).getJ() + " " + clone.get(i).getValue());
             if (clone.get(i).getValue() == -1) {
                 break;
             }
@@ -565,8 +583,6 @@ public class Minesweeper {
         for (int i = 0 ; i < include; i++) {
             tries.add(clone.get(i));
         }
-        System.out.println(include);
-        System.out.println(tries.size());
         return tries;
     }
 
@@ -648,34 +664,11 @@ public class Minesweeper {
     public static void main(String[] args) {
         Minesweeper t = new Minesweeper();
 
-//        t.playTurn(1, 1);
-//        t.printGameState();
-//
-//        t.playTurn(0, 0);
-//        t.printGameState();
-//
-//        t.playTurn(0, 2);
-//        t.printGameState();
-//
-//        t.playTurn(2, 0);
-//        t.printGameState();
-//
-//        t.playTurn(1, 0);
-//        t.printGameState();
-//
-//        t.playTurn(1, 2);
-//        t.printGameState();
-//
-//        t.playTurn(0, 1);
-//        t.printGameState();
-//
-//        t.playTurn(2, 2);
-//        t.printGameState();
-//
-//        t.playTurn(2, 1);
-//        t.printGameState();
-//        System.out.println();
-//        System.out.println();
-//        System.out.println("Winner is: " + t.checkWinner());
+        t.show(1, 1);
+        System.out.println(t);
+
+        t.show(2, 1);
+        System.out.println(t);
+
     }
 }

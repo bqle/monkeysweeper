@@ -11,13 +11,33 @@ PennKey: _______
   is an appropriate use of the concept. Incorporate the feedback you got after
   submitting your proposal.
 
-  1.
+  1. 2D array:
+  I used 2d array to store the board information. I implemented a 2d array of Square(s),
+  which have a visibility and value field. It is an appropriate use of 2d array because
+  it represents the grid nature of the board, where each square has adjacent squares
+  horizontally, vertically, and diagonally. I also limited the use of 2d arrays by
+  creating the Square class, which groups the coordinate, value, and visibility fields
+  into one object.
 
-  2.
+  2. File I/O:
+  I used File I/O to save the board information when the user wants to or when they quit
+  the game. I simply saved all the game information like bomb count, uncovered count, and
+  each board state into one text file. It is an appropriate use of the concept because users
+  may want to save their game for later return, and saving the game information to a text
+  file seems easiest.
 
-  3.
+  3. Recursion:
+  I used recursion to implement the propagating feature when a user clicks an empty square.
+  In game sweeper, when an empty square is revealed, all adjacent squares to it are also
+  revealed, and if the adjacent squares are also empty, this process repeats
 
-  4.
+  4. JUnit testable component:
+  The Minesweeper class contains all the isolated logic needed for minesweeper and does not
+  rely on GUI components. I have also tried to separate the game logic into separate parts
+  so that each part is small enough to be testable. For instance, for the solving algorithm,
+  I separate the updateProbability methods from the getAdjacentBombProbability so that
+  each is testable.
+
 
 =========================
 =: Your Implementation :=
