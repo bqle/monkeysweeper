@@ -1,13 +1,9 @@
-package org.cis120.minesweeper;
-
+package monkeysweeper;
 /**
- * CIS 120 HW09 - TicTacToe Demo
- * (c) University of Pennsylvania
- * Created by Bayley Tuch, Sabrina Green, and Nicolas Corona in Fall 2020.
+ * CIS 120 HW09 - Minesweeper
  */
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -21,7 +17,7 @@ import java.awt.event.ActionListener;
  * for more details on Model-View-Controller:
  * https://www.seas.upenn.edu/~cis120/current/files/slides/lec37.pdf
  * 
- * In a Model-View-Controller framework, Game initializes the view,
+ * In a Model-View-Controller framework, minesweeper.Game initializes the view,
  * implements a bit of controller functionality through the reset
  * button, and then instantiates a GameBoard. The GameBoard will
  * handle the rest of the game's view and controller functionality, and
@@ -64,17 +60,14 @@ public class RunMinesweeper implements Runnable {
         final JButton save = new JButton("<html>Save</html>");
         final JButton help = new JButton("<html>Help</html>");
 
-        JButton[] buttons = new JButton[]{reset, solveLikePro, solveLikeAmateur, solveLikeMonkey, save, help};
+        JButton[] buttons = new JButton[] { reset,
+            solveLikePro, solveLikeAmateur, solveLikeMonkey, save, help };
 
-        // Game board
+        // minesweeper.Game board
         final GameBoard board = new GameBoard(status, frame, buttons);
         frame.add(board, BorderLayout.CENTER);
 
         // Reset button
-        // Note here that when we add an action listener to the reset button, we
-        // define it as an anonymous inner class that is an instance of
-        // ActionListener with its actionPerformed() method overridden. When the
-        // button is pressed, actionPerformed() will be called.
         reset.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 board.reset();
@@ -109,7 +102,7 @@ public class RunMinesweeper implements Runnable {
         // Save button
         save.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                board.saveToFile();
+                board.saveToFile(true);
             }
         });
         help_panel.add(save);
@@ -117,48 +110,53 @@ public class RunMinesweeper implements Runnable {
         // Help button
         help.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(frame,
+                JOptionPane.showMessageDialog(
+                        frame,
                         "<html><center>Welcome to <i>Minesweeper V2</i></center><br>" +
                                 "Left click to reveal a square<br>" +
                                 "Right click to place or remove a flag<br>" +
-                                "(sorry, Mac users, but the game doesn't have trackpad support)<br>" +
+                                "(sorry, Mac users, but the game doesn't have trackpad support)<br>"
+                                +
                                 "The side options come with abilities<br>" +
                                 "of increasing dexterity to solve the game.<br><br>" +
                                 "<center>Have fun stepping on mines<br>" +
-                                "or let the monkey do it for you :)</center>"+
-                                "</html>", "Instructions", JOptionPane.INFORMATION_MESSAGE);
+                                "or let the monkey do it for you :)</center>" +
+                                "</html>",
+                        "Instructions", JOptionPane.INFORMATION_MESSAGE
+                );
             }
         });
         help_panel.add(help);
-
-
 
         // Put the frame on the screen
         frame.pack();
         frame.setVisible(true);
 
-
         // Set operation to close if
         frame.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-                int confirm = JOptionPane.showOptionDialog(frame,
+                int confirm = JOptionPane.showOptionDialog(
+                        frame,
                         "Would you like to save the game?",
                         "Exit Confirmation", JOptionPane.YES_NO_OPTION,
-                        JOptionPane.QUESTION_MESSAGE, null, null, null);
+                        JOptionPane.QUESTION_MESSAGE, null, null, null
+                );
 
+                // There are other options as well
                 if (confirm == JOptionPane.NO_OPTION) {
                     board.reset();
+                    board.saveToFile(false);
+                    System.exit(1);
+                } else if (confirm == JOptionPane.YES_OPTION) {
+                    board.saveToFile(true);
+                    System.exit(1);
                 }
-                board.saveToFile();
-                System.exit(1);
 
             }
         });
 
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-
-
 
     }
 }

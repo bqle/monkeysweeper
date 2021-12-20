@@ -1,11 +1,12 @@
-package org.cis120.minesweeper;
+package monkeysweeper;
 
 public class Square {
-    // -1 indicates a bomb, any other integer
+    // -1 indicates a bomb,
+    // any other integer
     // indicates the number of bombs adjacent to this square
     private int value;
 
-    // 0 is not shown; 1 is shown; 2 is flagged
+    // 0 is not shown; 1 is shown; 2 is flag
     private int visibility;
 
     private int i;

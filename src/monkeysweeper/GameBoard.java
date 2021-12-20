@@ -1,9 +1,7 @@
-package org.cis120.minesweeper;
+package monkeysweeper;
 
 /**
- * CIS 120 HW09 - TicTacToe Demo
- * (c) University of Pennsylvania
- * Created by Bayley Tuch, Sabrina Green, and Nicolas Corona in Fall 2020.
+ * CIS 120 HW09 - Minesweeper
  */
 
 import javax.imageio.ImageIO;
@@ -15,37 +13,21 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.LinkedList;
 
-/**
- * This class instantiates a TicTacToe object, which is the model for the game.
- * As the user clicks the game board, the model is updated. Whenever the model
- * is updated, the game board repaints itself and updates its status JLabel to
- * reflect the current state of the model.
- * 
- * This game adheres to a Model-View-Controller design framework. This
- * framework is very effective for turn-based games. We STRONGLY
- * recommend you review these lecture slides, starting at slide 8,
- * for more details on Model-View-Controller:
- * https://www.seas.upenn.edu/~cis120/current/files/slides/lec37.pdf
- * 
- * In a Model-View-Controller framework, GameBoard stores the model as a field
- * and acts as both the controller (with a MouseListener) and the view (with
- * its paintComponent method and the status JLabel).
- */
 @SuppressWarnings("serial")
 public class GameBoard extends JPanel {
 
     private Minesweeper minesweeper; // model for the game
     private JLabel status; // current status text
+    private JFrame frame;
     private BufferedImage flagImg;
     private BufferedImage hiddenImg;
     private BufferedImage bombImg;
     private JButton[] buttons;
     private boolean solvingMode;
 
-    // Game constants
+    // minesweeper.Game constants
     public static final int BOARD_WIDTH = 400;
     public static final int BOARD_HEIGHT = 400;
-
 
     /**
      * Initializes the game board.
@@ -62,6 +44,7 @@ public class GameBoard extends JPanel {
         buttons = buttonsInit;
         solvingMode = false;
         minesweeper = readFromFile(); // initializes model for the game
+        this.frame = frame;
 
         updateStatus();
 
@@ -77,7 +60,10 @@ public class GameBoard extends JPanel {
                     if (SwingUtilities.isRightMouseButton(e)) {
                         boolean valid = minesweeper.flipFlag(p.y / 20, p.x / 20);
                         if (!valid) {
-                            JOptionPane.showMessageDialog(frame, "You ran out of flags. Consider undoing some flags.");
+                            JOptionPane.showMessageDialog(
+                                    frame,
+                                    "You ran out of flags. Consider undoing some flags."
+                            );
                         }
                     } else if (SwingUtilities.isLeftMouseButton(e)) {
                         minesweeper.show(p.y / 20, p.x / 20);
@@ -97,12 +83,22 @@ public class GameBoard extends JPanel {
         }
     }
 
-    public void saveToFile() {
+    public void saveToFile(boolean displayMessage) {
         try {
             BufferedWriter bw = new BufferedWriter(new FileWriter("files/save.txt"));
             bw.write(minesweeper.toString());
             bw.close();
-        } catch (Exception e) {
+            if (displayMessage) {
+                JOptionPane.showMessageDialog(
+                        frame,
+                        "Save successful."
+                );
+            }
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(
+                    frame,
+                    "For some reason, your save was unsuccessful."
+            );
             System.out.println(e);
         }
     }
@@ -112,7 +108,7 @@ public class GameBoard extends JPanel {
         Square[][] board = m.getBoard();
 
         File f = new File("files/save.txt");
-        try{
+        try {
             if (f.exists()) {
                 System.out.println("File exists");
                 BufferedReader br = new BufferedReader(new FileReader("files/save.txt"));
@@ -120,10 +116,11 @@ public class GameBoard extends JPanel {
                 m.setUncoveredCnt(Integer.valueOf(br.readLine()));
                 m.setGameOver(Boolean.valueOf(br.readLine()));
                 m.setBombCount(Integer.valueOf(br.readLine()));
-                for (int i = 0 ; i < 20 ;i++) {
+                for (int i = 0; i < 20; i++) {
                     String row = br.readLine();
                     if (row == null || row.isEmpty()) {
-                        break;}
+                        break;
+                    }
                     String[] squareStrings = row.split(";");
                     int min = Math.min(20, squareStrings.length);
                     for (int j = 0; j < min; j++) {
@@ -134,13 +131,14 @@ public class GameBoard extends JPanel {
                 }
                 br.close();
             }
-        }catch (Exception e) {
+        } catch (IOException e) {
             System.out.println("save file not found, or file was in incorrect format");
             System.out.println(e);
         } finally {
             return m;
         }
     }
+
     /**
      * (Re-)sets the game to its initial state.
      */
@@ -153,6 +151,9 @@ public class GameBoard extends JPanel {
         requestFocusInWindow();
     }
 
+    /**
+     * switches between user-interactive mode to computer solving mode
+     */
     public void switchSolvingMode() {
         if (solvingMode) {
             for (JButton b : buttons) {
@@ -171,20 +172,20 @@ public class GameBoard extends JPanel {
      */
     public void performAllClicks(LinkedList<Square> clicks) {
         System.out.println("perform all clicks: " + clicks.size());
-        for (Square s: clicks) {
+        for (Square s : clicks) {
             System.out.println(s.getI() + " " + s.getJ());
-            int temp_i = s.getI();
-            int temp_j = s.getJ();
+            int tempI = s.getI();
+            int tempJ = s.getJ();
             SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
-                    minesweeper.show(temp_i, temp_j);
-                    status.setText("Just played row: " + temp_i + " col:" + temp_j);
+                    minesweeper.show(tempI, tempJ);
+                    status.setText("Just played row: " + tempI + " col:" + tempJ);
                     repaint();
                 }
             });
             try {
                 Thread.sleep(200);
-            } catch(InterruptedException e) {
+            } catch (InterruptedException e) {
                 System.out.println("Interrupted exception");
             }
         }
@@ -199,7 +200,6 @@ public class GameBoard extends JPanel {
     public void solveLikePro() {
         solve(minesweeper.solveLikePro());
     }
-
 
     /**
      * Solve the game without acknowledging guaranteeed squares
@@ -217,6 +217,7 @@ public class GameBoard extends JPanel {
 
     /**
      * general helper to activate all the clicks one-by-one
+     * 
      * @param clicks
      */
     public void solve(LinkedList<Square> clicks) {
@@ -229,7 +230,7 @@ public class GameBoard extends JPanel {
                 }
             }).start();
 
-        }catch (Exception e) {
+        } catch (Exception e) {
             System.out.println("Interrupted exception");
         }
     }
@@ -242,7 +243,7 @@ public class GameBoard extends JPanel {
             minesweeper.revealAllSquares();
             status.setText("Congratulations! You won!");
         } else if (minesweeper.isGameOver()) {
-            status.setText("Game over! You hit a bomb.");
+            status.setText("minesweeper.Game over! You hit a bomb.");
         } else {
             status.setText("Flags: " + minesweeper.getFlagCount());
         }
@@ -250,7 +251,7 @@ public class GameBoard extends JPanel {
 
     /**
      * Draws the game board.
-     * 
+     *
      * There are many ways to draw a game board. This approach
      * will not be sufficient for most games, because it is not
      * modular. All of the logic for drawing the game board is
@@ -268,7 +269,7 @@ public class GameBoard extends JPanel {
         }
         // Draw horizontal lines
         for (int i = 1; i < 21; i++) {
-            g.drawLine(0, 20*i, BOARD_WIDTH, 20*i);
+            g.drawLine(0, 20 * i, BOARD_WIDTH, 20 * i);
         }
 
         // Draws flags and numbers
@@ -279,12 +280,12 @@ public class GameBoard extends JPanel {
                 int visibility = square.getVisibility();
 
                 if (visibility == 0) {
-                    g.drawImage(hiddenImg, 20*i, 20*j, 20, 20, null);
+                    g.drawImage(hiddenImg, 20 * i, 20 * j, 20, 20, null);
                 } else if (visibility == 1) {
                     if (value == -1) {
-                        g.drawImage(bombImg, 20*i+1, 20*j+1, 19, 19, null);
-                    } else if (value > 0){
-                        g.drawString(Integer.toString(value), 20 * i+7, 20 * j + 15);
+                        g.drawImage(bombImg, 20 * i + 1, 20 * j + 1, 19, 19, null);
+                    } else if (value > 0) {
+                        g.drawString(Integer.toString(value), 20 * i + 7, 20 * j + 15);
                     }
                 } else {
                     g.drawImage(flagImg, 20 * i, 20 * j, 20, 20, null);
@@ -292,7 +293,6 @@ public class GameBoard extends JPanel {
 
             }
         }
-
 
     }
 

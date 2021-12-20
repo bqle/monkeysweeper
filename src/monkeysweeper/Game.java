@@ -1,7 +1,5 @@
-package org.cis120;
+package monkeysweeper;
 
-import java.awt.*;
-import java.awt.event.*;
 import javax.swing.*;
 
 public class Game {
@@ -11,9 +9,8 @@ public class Game {
      * include a main method in your final submission.
      */
     public static void main(String[] args) {
-        Runnable game = new org.cis120.minesweeper.RunMinesweeper(); // Set the game you want to run
+        Runnable game = new monkeysweeper.RunMinesweeper(); // Set the game you want to run
                                                                      // here
         SwingUtilities.invokeLater(game);
     }
 }
-

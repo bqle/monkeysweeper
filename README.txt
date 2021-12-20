@@ -1,6 +1,6 @@
 =:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=
-CIS 120 Game Project README
-PennKey: _______
+CIS 120 monkeysweeper.Game Project README
+PennKey: 24279475
 =:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=
 
 ===================
@@ -32,7 +32,7 @@ PennKey: _______
   revealed, and if the adjacent squares are also empty, this process repeats
 
   4. JUnit testable component:
-  The Minesweeper class contains all the isolated logic needed for minesweeper and does not
+  The Minesweeper class contains all the isolated logic needed for monkeysweeper and does not
   rely on GUI components. I have also tried to separate the game logic into separate parts
   so that each part is small enough to be testable. For instance, for the solving algorithm,
   I separate the updateProbability methods from the getAdjacentBombProbability so that
@@ -45,11 +45,11 @@ PennKey: _______
 
 - Provide an overview of each of the classes in your code, and what their
   function is in the overall game.
-There are four classes in my game. RunMinesweeper is similar to the view in the MVC model.
+There are four classes in my game. monkeysweeper.RunMinesweeper is similar to the view in the MVC model.
 It creates a frame, the buttons, statuses, and organize them on the screen. It also
 adds event listeners to the buttons, but the logic of what each button does is delegated
 to GameBoard. GameBoard is similar to the controller in the MVC model. First, it
-handles the interactions between RunMinesweeper and the models (Minesweeper and Square).
+handles the interactions between monkeysweeper.RunMinesweeper and the models (Minesweeper and Square).
 For instance, when a square is clicked, the GameBoard calls the update functions of the
 models to update the game's inner state. Not only that, it can make update the status
 messages, and handles saving/loading game state from file. Lastly, my models are Square
@@ -65,7 +65,7 @@ been shown/flagged or not.
 A significant stumbling block for me was organizing the whole code, so that the solving
 algorithms do not repeat much code. At one point, I had separate solving algorithms in
 Minesweeper, but I realized solveLikePro and solveLikeAmateur had pretty similar structure,
-just their updateProbability was different. I had the same problem in RunMinesweeper
+just their updateProbability was different. I had the same problem in monkeysweeper.RunMinesweeper
 with the solving feature - where they largely shared the same structure.
 As such, I refractored the code so that the overlapping structure is eliminated by using
 functional programming.
@@ -81,7 +81,7 @@ had the Square instance, I know all values related to it.
 I think my design has good separation of functionality, and it clearly exemplifies the
 MVC model. I think the private states are encapsulated thoroughly because all class states
 were made private, but they all had getters and setters to them.
-However, if given the chance, I would rethink my code in minesweeper a bit more because
+However, if given the chance, I would rethink my code in monkeysweeper a bit more because
 there is a lot of functionalities that require checking all 8 squares around a square,
 and right now I just have different methods that each have 8 if statements. Instead,
 with functional programming, I can probably condense the code so that only method will
@@ -95,9 +95,9 @@ Overall, I think my design separates functionality quite clearly and is easy to 
 - Cite any external resources (images, tutorials, etc.) that you may have used 
   while implementing your game.
 I used images from the following links to help build my game:
-https://appsftw.com/app/minesweeper-i-my-mine
+https://appsftw.com/app/monkeysweeper-i-my-mine
 https://commons.wikimedia.org/wiki/File:Minesweeper_unopened_square.svg
-https://www.pngwing.com/en/search?q=minesweeper
-Also, I stumbled across the idea of using probability to solve minesweeper through:
-https://stackoverflow.com/questions/1738128/minesweeper-solving-algorithm
+https://www.pngwing.com/en/search?q=monkeysweeper
+Also, I stumbled across the idea of using probability to solve monkeysweeper through:
+https://stackoverflow.com/questions/1738128/monkeysweeper-solving-algorithm
 However, I implemented all three algorithms on my own.
