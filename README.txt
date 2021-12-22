@@ -45,11 +45,11 @@ PennKey: 24279475
 
 - Provide an overview of each of the classes in your code, and what their
   function is in the overall game.
-There are four classes in my game. monkeysweeper.RunMinesweeper is similar to the view in the MVC model.
+There are four classes in my game. monkeysweeper.RunMonkeysweeper is similar to the view in the MVC model.
 It creates a frame, the buttons, statuses, and organize them on the screen. It also
 adds event listeners to the buttons, but the logic of what each button does is delegated
 to GameBoard. GameBoard is similar to the controller in the MVC model. First, it
-handles the interactions between monkeysweeper.RunMinesweeper and the models (Minesweeper and Square).
+handles the interactions between monkeysweeper.RunMonkeysweeper and the models (Minesweeper and Square).
 For instance, when a square is clicked, the GameBoard calls the update functions of the
 models to update the game's inner state. Not only that, it can make update the status
 messages, and handles saving/loading game state from file. Lastly, my models are Square
@@ -65,7 +65,7 @@ been shown/flagged or not.
 A significant stumbling block for me was organizing the whole code, so that the solving
 algorithms do not repeat much code. At one point, I had separate solving algorithms in
 Minesweeper, but I realized solveLikePro and solveLikeAmateur had pretty similar structure,
-just their updateProbability was different. I had the same problem in monkeysweeper.RunMinesweeper
+just their updateProbability was different. I had the same problem in monkeysweeper.RunMonkeysweeper
 with the solving feature - where they largely shared the same structure.
 As such, I refractored the code so that the overlapping structure is eliminated by using
 functional programming.

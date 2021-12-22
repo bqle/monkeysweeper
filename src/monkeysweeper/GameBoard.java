@@ -1,7 +1,7 @@
 package monkeysweeper;
 
 /**
- * CIS 120 HW09 - Minesweeper
+ * Monkeysweeper
  */
 
 import javax.imageio.ImageIO;
@@ -16,7 +16,7 @@ import java.util.LinkedList;
 @SuppressWarnings("serial")
 public class GameBoard extends JPanel {
 
-    private Minesweeper minesweeper; // model for the game
+    private Monkeysweeper monkeysweeper; // model for the game
     private JLabel status; // current status text
     private JFrame frame;
     private BufferedImage flagImg;
@@ -43,7 +43,7 @@ public class GameBoard extends JPanel {
         status = statusInit; // initializes the status JLabel
         buttons = buttonsInit;
         solvingMode = false;
-        minesweeper = readFromFile(); // initializes model for the game
+        monkeysweeper = readFromFile(); // initializes model for the game
         this.frame = frame;
 
         updateStatus();
@@ -58,7 +58,7 @@ public class GameBoard extends JPanel {
                 if (!solvingMode) {
                     Point p = e.getPoint();
                     if (SwingUtilities.isRightMouseButton(e)) {
-                        boolean valid = minesweeper.flipFlag(p.y / 20, p.x / 20);
+                        boolean valid = monkeysweeper.flipFlag(p.y / 20, p.x / 20);
                         if (!valid) {
                             JOptionPane.showMessageDialog(
                                     frame,
@@ -66,7 +66,7 @@ public class GameBoard extends JPanel {
                             );
                         }
                     } else if (SwingUtilities.isLeftMouseButton(e)) {
-                        minesweeper.show(p.y / 20, p.x / 20);
+                        monkeysweeper.show(p.y / 20, p.x / 20);
                     }
 
                     updateStatus(); // updates the status JLabel
@@ -86,7 +86,7 @@ public class GameBoard extends JPanel {
     public void saveToFile(boolean displayMessage) {
         try {
             BufferedWriter bw = new BufferedWriter(new FileWriter("files/save.txt"));
-            bw.write(minesweeper.toString());
+            bw.write(monkeysweeper.toString());
             bw.close();
             if (displayMessage) {
                 JOptionPane.showMessageDialog(
@@ -103,8 +103,8 @@ public class GameBoard extends JPanel {
         }
     }
 
-    public Minesweeper readFromFile() {
-        Minesweeper m = new Minesweeper();
+    public Monkeysweeper readFromFile() {
+        Monkeysweeper m = new Monkeysweeper();
         Square[][] board = m.getBoard();
 
         File f = new File("files/save.txt");
@@ -143,8 +143,8 @@ public class GameBoard extends JPanel {
      * (Re-)sets the game to its initial state.
      */
     public void reset() {
-        minesweeper.reset();
-        status.setText("Flag: " + minesweeper.getFlagCount());
+        monkeysweeper.reset();
+        status.setText("Flag: " + monkeysweeper.getFlagCount());
         repaint();
 
         // Makes sure this component has keyboard/mouse focus
@@ -178,7 +178,7 @@ public class GameBoard extends JPanel {
             int tempJ = s.getJ();
             SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
-                    minesweeper.show(tempI, tempJ);
+                    monkeysweeper.show(tempI, tempJ);
                     status.setText("Just played row: " + tempI + " col:" + tempJ);
                     repaint();
                 }
@@ -198,21 +198,21 @@ public class GameBoard extends JPanel {
      * accounting for flag count
      */
     public void solveLikePro() {
-        solve(minesweeper.solveLikePro());
+        solve(monkeysweeper.solveLikePro());
     }
 
     /**
      * Solve the game without acknowledging guaranteeed squares
      */
     public void solveLikeAmateur() {
-        solve(minesweeper.solveLikeAmateur());
+        solve(monkeysweeper.solveLikeAmateur());
     }
 
     /**
      * Solve the game like a monkey
      */
     public void solveLikeMonkey() {
-        solve(minesweeper.solveLikeMonkey());
+        solve(monkeysweeper.solveLikeMonkey());
     }
 
     /**
@@ -239,13 +239,13 @@ public class GameBoard extends JPanel {
      * Updates the JLabel to reflect the current state of the game.
      */
     private void updateStatus() {
-        if (minesweeper.checkWin()) {
-            minesweeper.revealAllSquares();
+        if (monkeysweeper.checkWin()) {
+            monkeysweeper.revealAllSquares();
             status.setText("Congratulations! You won!");
-        } else if (minesweeper.isGameOver()) {
+        } else if (monkeysweeper.isGameOver()) {
             status.setText("minesweeper.Game over! You hit a bomb.");
         } else {
-            status.setText("Flags: " + minesweeper.getFlagCount());
+            status.setText("Flags: " + monkeysweeper.getFlagCount());
         }
     }
 
@@ -275,7 +275,7 @@ public class GameBoard extends JPanel {
         // Draws flags and numbers
         for (int i = 0; i < 20; i++) {
             for (int j = 0; j < 20; j++) {
-                Square square = minesweeper.getSquare(j, i);
+                Square square = monkeysweeper.getSquare(j, i);
                 int value = square.getValue();
                 int visibility = square.getVisibility();
 

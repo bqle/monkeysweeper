@@ -25,7 +25,7 @@ import java.util.LinkedList;
  * Run this file to see the main method play a game of TicTacToe,
  * visualized with Strings printed to the console.
  */
-public class Minesweeper {
+public class Monkeysweeper {
 
     private Square[][] board;
     private int flagCount;
@@ -36,7 +36,7 @@ public class Minesweeper {
     /**
      * Constructor sets up game state.
      */
-    public Minesweeper() {
+    public Monkeysweeper() {
         reset();
     }
 
@@ -477,7 +477,7 @@ public class Minesweeper {
             Class[] parameterTypes = new Class[2];
             parameterTypes[0] = Square[][].class;
             parameterTypes[1] = float[][].class;
-            Method updateProbabilityMethod = Minesweeper.class
+            Method updateProbabilityMethod = Monkeysweeper.class
                     .getMethod("updateProbabilityLikePro", parameterTypes);
             tries = solve(updateProbabilityMethod);
         } catch (Exception e) {
@@ -599,7 +599,7 @@ public class Minesweeper {
             Class[] parameterTypes = new Class[2];
             parameterTypes[0] = Square[][].class;
             parameterTypes[1] = float[][].class;
-            Method updateProbabilityMethod = Minesweeper.class
+            Method updateProbabilityMethod = Monkeysweeper.class
                     .getMethod("updateProbabilityLikeAmateur", parameterTypes);
             tries = solve(updateProbabilityMethod);
         } catch (Exception e) {
@@ -721,7 +721,7 @@ public class Minesweeper {
      * Run this file to see the output of this method in your console.
      */
     public static void main(String[] args) {
-        Minesweeper t = new Minesweeper();
+        Monkeysweeper t = new Monkeysweeper();
 
         t.show(1, 1);
         System.out.println(t);
