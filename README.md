@@ -25,9 +25,11 @@ The program may only work for MacOS. If it does not work for you, you can open t
 
 ## Demo
 
-![Monkeysweeper Start Screen](files/Default%20screen.png)
+![Monkeysweeper Start Screen](files/default_screen.png)
 ![Monkeysweeper Game Play](files/gameplay.png)
-![Watch the demo!](files/pro_sweeper.mp4)
+<video width="320" height="240" controls>
+  <source src="files/pro_sweeper.mp4" type="video/mp4">
+</video>
 
 ## Author
 
