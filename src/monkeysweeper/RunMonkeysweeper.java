@@ -18,7 +18,7 @@ import java.awt.event.ActionListener;
 public class RunMonkeysweeper implements Runnable {
     public void run() {
         // Top-level frame in which game components live
-        final JFrame frame = new JFrame("TicTacToe");
+        final JFrame frame = new JFrame("Monkeysweeper");
         frame.setLocation(400, 400);
 
         // Status panel

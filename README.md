@@ -23,7 +23,11 @@ javac -jar monkeysweeper.jar
 The program may only work for MacOS. If it does not work for you, you can open the project in an editor of choice, and run the Game class. 
 
 
-## Demos
+## Demo
+
+![Monkeysweeper Start Screen](files/Default%20screen.png)
+![Monkeysweeper Game Play](files/gameplay.png)
+![Watch the demo!](files/pro_sweeper.mp4)
 
 ## Author
 
