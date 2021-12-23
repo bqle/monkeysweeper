@@ -27,6 +27,7 @@ The program may only work for MacOS. If it does not work for you, you can open t
 
 ![Monkeysweeper Start Screen](files/default_screen.png)
 ![Monkeysweeper Game Play](files/gameplay.png)
+<br>
 [Watch the demo!](https://imgur.com/uKlErW2)
 
 ## Author
