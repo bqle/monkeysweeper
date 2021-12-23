@@ -27,9 +27,7 @@ The program may only work for MacOS. If it does not work for you, you can open t
 
 ![Monkeysweeper Start Screen](files/default_screen.png)
 ![Monkeysweeper Game Play](files/gameplay.png)
-<video width="320" height="240" controls>
-  <source src="files/pro_sweeper.mp4" type="video/mp4">
-</video>
+[Watch the demo!](https://imgur.com/uKlErW2)
 
 ## Author
 
