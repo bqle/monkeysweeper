@@ -18,7 +18,7 @@ javac -jar monkeysweeper.jar
 
 ## Help
 
-The program may only work for MacOS. If it does not work for you, you can open the project in an editor of choice, and run the Game class. 
+The jar file may only work for MacOS. If it does not work for you, you can open the project in an editor of choice, and run the Game class. 
 
 
 ## Demo
