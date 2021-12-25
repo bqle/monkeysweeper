@@ -8,8 +8,6 @@ Using probabilistic methods, this version of monkeysweeper comes with 3 differen
 Particularly, the solving algorithms use heuristics of different complexity to calculate the bomb probability of each square, and then chooses the one with lowest bomb probability in each iteration.<br> 
 As a result, the algorithm of highest dexterity solves similar to how an expert solver would. Randomized over 1000 trials, its probability of completing the game is 72.8%, with the majority number of failed games from clicking a bomb in the exploration phase.     
 
-## Getting Started
-
 ### Executing program
 
 * Clone the github and change directory in the command line to this folder
